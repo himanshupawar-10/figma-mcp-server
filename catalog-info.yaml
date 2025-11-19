@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: figma-mcp-server
+  description: Minimal Figma MCP server exposing Figma tools over stdio
+  # change to your team/user
+  owner: team@example.com
+spec:
+  type: service
+  lifecycle: experimental
+  # optional: link to the repo on GitHub (update after you publish)
+  links:
+    - url: https://github.com/<your-username>/<repo-name>
+      title: Source
