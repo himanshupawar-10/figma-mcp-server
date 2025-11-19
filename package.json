@@ -1,0 +1,13 @@
+{
+  "name": "figma-mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "zod": "^3.21.4",
+    "dotenv": "^16.0.0"
+  }
+}

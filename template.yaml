@@ -1,0 +1,96 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: figma-mcp-server
+  title: Figma MCP Server (Scaffolder Template)
+  description: |
+    Backstage scaffolder template to publish this Figma MCP Server repository to GitHub
+    and add a catalog-info.yaml so it appears in Backstage. Requires the GitHub publish
+    action to be enabled in your Backstage instance.
+  # update owner to your team or user in Backstage
+  annotations:
+    backstage.io/techdocs-ref: 'none'
+spec:
+  owner: team@example.com
+  type: service
+  parameters:
+    - title: Repository settings
+      required:
+        - repoName
+        - repoOwner
+      properties:
+        repoName:
+          title: Repository name
+          type: string
+          examples:
+            - my-figma-mcp-server
+        repoOwner:
+          title: GitHub owner (org or user)
+          type: string
+          examples:
+            - my-org
+        repoDescription:
+          title: Repository description
+          type: string
+          default: Minimal Figma MCP server exposing Figma tools over stdio
+        repoVisibility:
+          title: Repository visibility
+          type: string
+          enum:
+            - public
+            - private
+          default: public
+    - title: Optional metadata for catalog
+      required: []
+      properties:
+        componentOwner:
+          title: Component owner in Backstage
+          type: string
+          default: team@example.com
+        componentLifecycle:
+          title: Lifecycle
+          type: string
+          default: experimental
+  steps:
+    - id: create-catalog-file
+      name: Add catalog-info.yaml to the repo
+      action: create:files
+      input:
+        files:
+          catalog-info.yaml: |
+            apiVersion: backstage.io/v1alpha1
+            kind: Component
+            metadata:
+              name: {{ parameters.repoName }}
+              description: "{{ parameters.repoDescription }}"
+              annotations:
+                # Link to the repo that will be created
+                backstage.io/source-location: "url:https://github.com/{{ parameters.repoOwner }}/{{ parameters.repoName }}"
+            spec:
+              type: service
+              owner: {{ parameters.componentOwner }}
+              lifecycle: {{ parameters.componentLifecycle }}
+              providesApis: []
+              consumesApis: []
+    - id: publish-repo
+      name: Publish repository to GitHub
+      action: publish:github
+      input:
+        repoUrl: https://github.com/{{ parameters.repoOwner }}/{{ parameters.repoName }}
+        description: "{{ parameters.repoDescription }}"
+        repoVisibility: "{{ parameters.repoVisibility }}"
+        repoOwner: "{{ parameters.repoOwner }}"
+        repoName: "{{ parameters.repoName }}"
+        # defaultBranch can be set if desired
+        defaultBranch: main
+        # The folder to publish; this template expects the current template contents to be the project root
+        # If using this template from the repository itself, the scaffolder will package the template directory
+        # and publish it as the new repo contents.
+        include: ./
+        # token will usually be provided via a secret; Backstage typically injects it as secrets.githubToken
+        githubToken: ${{ secrets.githubToken }}
+  # Optionally provide an example output location
+  output:
+    links:
+      - url: https://github.com/{{ parameters.repoOwner }}/{{ parameters.repoName }}
+        title: Repository
