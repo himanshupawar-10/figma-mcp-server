@@ -8,7 +8,6 @@ metadata:
 spec:
   type: service
   lifecycle: experimental
-  owner: user/default
   owner: "user:default/hmpawar10"
   # optional: link to the repo on GitHub (update after you publish)
   links:
